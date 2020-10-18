@@ -2,8 +2,9 @@
 default_question_category = ''
 
 # memcache keys
-category_memcache_key = '{}_category_questions'
+question_category_memcache_key = '{}_category_questions'
 answers_memcache_key = 'answers'
+categories_mamcache = 'categories_list'
 
 # data model keys
 question_id = 'question_id'

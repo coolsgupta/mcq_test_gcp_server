@@ -26,9 +26,9 @@ class FetchQuestionSet:
     @classmethod
     def get_questions(cls, category):
         try:
-            question_set = utils.MemcacheHandler.get(constants.category_memcache_key.format(category))
+            question_set = utils.MemcacheHandler.get_from_memcache(constants.question_category_memcache_key.format(category))
             if not question_set:
-                question_set = utils.MemcacheHandler.set_category_question_set(constants.category_memcache_key.format(category))
+                question_set = utils.MemcacheHandler.set_category_question_set(constants.question_category_memcache_key.format(category))
 
             return json.dumps(question_set)
 

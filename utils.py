@@ -7,7 +7,7 @@ import constants
 
 class MemcacheHandler:
     @classmethod
-    def get(cls, memcache_key):
+    def get_from_memcache(cls, memcache_key):
         try:
             data = memcache.get(memcache_key)
             return json.loads(data)
@@ -26,7 +26,7 @@ class MemcacheHandler:
         question_data_obj = data_object.fetch(None)
 
         try:
-            answers_dict = cls.get(constants.answers_memcache_key)
+            answers_dict = cls.get_from_memcache(constants.answers_memcache_key)
             if not answers_dict:
                 answers_dict = cls.set_answers_memcache()
 
@@ -57,8 +57,17 @@ class MemcacheHandler:
         memcache.set(constants.answers_memcache_key, json.dumps(all_answers_dict))
         return all_answers_dict
 
+    @classmethod
+    def delete_question_bank(cls, categories):
+        memcache.delete(constants.answers_memcache_key)
+        for category in categories:
+            memcache.delete(constants.question_category_memcache_key.format(category))
+        memcache.set(constants.categories_mamcache, json.dumps(list(categories)))
+
 
 def insert_update_question_bank_db(question_set):
+    question_categories = set()
+    question_categories.add('ALL')
     for question in question_set:
         question_id = question['id']
         try:
@@ -75,6 +84,7 @@ def insert_update_question_bank_db(question_set):
         question_record.question_text = question['question_text']
         question_record.category = question['category']
         question_record.correct_answer_id = question['correct_answer_id']
+        question_categories.add(question['category'])
 
         for answer in question['answers']:
             answer_id = answer['id']
@@ -97,6 +107,7 @@ def insert_update_question_bank_db(question_set):
                 question_record.answers.append(answer_id)
 
         question_record.put()
+    MemcacheHandler.delete_question_bank(question_categories)
 
 
 
