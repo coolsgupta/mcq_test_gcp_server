@@ -17,10 +17,11 @@ class UserDatahandler:
             request_data = json.loads(request.data)
             user_email = request_data[constants.user_email]
 
-            user_data_object = data_models.Users(key_name=user_email)
+            user_data_object = data_models.Users.get_by_key_name(user_email)
             if not user_data_object:
                 user_data_object = data_models.Users(key_name=user_email)
-                user_data_object.put()
+
+            user_data_object.put()
 
             return json.dumps({'success': True})
 
