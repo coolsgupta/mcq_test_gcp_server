@@ -7,6 +7,10 @@ import constants
 
 class MemcacheHandler:
     @classmethod
+    def set_memcache_key(cls, key, value):
+        memcache.set(key, value)
+
+    @classmethod
     def get_from_memcache(cls, memcache_key):
         try:
             data = memcache.get(memcache_key)
@@ -17,8 +21,8 @@ class MemcacheHandler:
             return None
 
     @classmethod
-    def set_category_question_set(cls, memcache_key):
-        category = memcache_key.split('_')[0]
+    def set_category_question_set(cls, category):
+        memcache_key = constants.category_question_bank_with_solution_memcache_key.format(category)
         data_object = data_models.QuestionSetModel.all()
         if category != 'ALL':
             data_object = data_object.filter('category', category)
@@ -34,25 +38,25 @@ class MemcacheHandler:
             logging.error(traceback.format_exc())
             raise Exception('Unable to load answers')
 
-        question_list = []
+        question_list_with_answers = []
         for question_obj in question_data_obj:
-            question_list.append({
+            question_list_with_answers.append({
                 constants.question_id: question_obj.question_id,
                 constants.question_category: question_obj.category,
                 constants.correct_answer_id: question_obj.correct_answer_id,
                 constants.question_text: question_obj.question_text,
-                constants.answers: [answers_dict[answer_id] for answer_id in question_obj.answers]
+                constants.answers: {answer_id: answers_dict[answer_id] for answer_id in question_obj.answers}
             })
 
-        memcache.set(memcache_key, json.dumps(question_list))
-        return question_list
+        memcache.set(memcache_key, json.dumps(question_list_with_answers))
+        return question_list_with_answers
 
     @classmethod
     def set_answers_memcache(cls):
         all_answers_dict = {}
         all_answers = data_models.AnswersModel.all().fetch(None)
         for answer in all_answers:
-            all_answers_dict[answer.answer_id] = {answer.answer_id:answer.answer_text}
+            all_answers_dict[answer.answer_id] = answer.answer_text
 
         memcache.set(constants.answers_memcache_key, json.dumps(all_answers_dict))
         return all_answers_dict
@@ -61,7 +65,7 @@ class MemcacheHandler:
     def delete_question_bank(cls, categories):
         memcache.delete(constants.answers_memcache_key)
         for category in categories:
-            memcache.delete(constants.question_category_memcache_key.format(category))
+            memcache.delete(constants.category_question_bank_with_solution_memcache_key.format(category))
         memcache.set(constants.categories_mamcache, json.dumps(list(categories)))
 
 

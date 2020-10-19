@@ -2,7 +2,8 @@
 default_question_category = ''
 
 # memcache keys
-question_category_memcache_key = '{}_category_questions'
+category_question_bank_with_solution_memcache_key = '{}_category_questions_with_solution'
+category_question_bank_without_solution_memcache_key = '{}_category_questions_without_solution'
 answers_memcache_key = 'answers'
 categories_mamcache = 'categories_list'
 

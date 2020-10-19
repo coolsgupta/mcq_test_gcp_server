@@ -11,10 +11,14 @@ CORS(app)
 def hello_world():
     return 'Hello World!'
 
-
 @app.route('/create_update_question_bank')
 def create_update_question_bank():
     return CreateUpdateQuestionBank.get()
+
+
+@app.route('/get_categories')
+def get_categories():
+    return FetchQuestionSet.get_categories()
 
 
 @app.route('/fetch_question_set')

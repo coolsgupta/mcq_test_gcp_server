@@ -24,11 +24,20 @@ class CreateUpdateQuestionBank:
 
 class FetchQuestionSet:
     @classmethod
+    def get_categories(cls):
+        try:
+            categories = utils.MemcacheHandler.get_from_memcache(constants.categories_mamcache)
+            return json.dumps(categories)
+
+        except Exception as e:
+            logging.error(traceback.format_exc())
+
+    @classmethod
     def get_questions(cls, category):
         try:
-            question_set = utils.MemcacheHandler.get_from_memcache(constants.question_category_memcache_key.format(category))
+            question_set = utils.MemcacheHandler.get_from_memcache(constants.category_question_bank_with_solution_memcache_key.format(category))
             if not question_set:
-                question_set = utils.MemcacheHandler.set_category_question_set(constants.question_category_memcache_key.format(category))
+                question_set = utils.MemcacheHandler.set_category_question_set(category)
 
             return json.dumps(question_set)
 
