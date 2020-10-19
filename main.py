@@ -9,21 +9,38 @@ CORS(app)
 
 @app.route('/')
 def hello_world():
+    # todo: attach reach build
     return 'Hello World!'
+
+
+@app.route('/register_new_user')
+def register_new_user():
+    return UserDatahandler.register_new_user(request.args.get(constants.user_email, None))
+
 
 @app.route('/create_update_question_bank')
 def create_update_question_bank():
-    return CreateUpdateQuestionBank.get()
+    return QuestionBankHandler.get()
 
 
 @app.route('/get_categories')
 def get_categories():
-    return FetchQuestionSet.get_categories()
+    return QuestionBankHandler.get_categories()
 
 
 @app.route('/fetch_question_set')
-def fetch_complete_question_set():
-    return FetchQuestionSet.get_questions(request.args.get(constants.question_category, 'ALL'))
+def fetch_question_set():
+    return QuestionBankHandler.get_questions(request.args.get(constants.question_category, 'ALL'))
+
+
+@app.route('/evaluate_response', methods=["GET", "POST"])
+def evaluate_response():
+    return ScoreReportHandler.evaluate_response(request)
+
+
+@app.route('/get_user_score_reports')
+def get_user_score_reports():
+    return ScoreReportHandler.get_all_score_reports(request.args.get(constants.user_email, None))
 
 
 if __name__ == '__main__':

@@ -2,8 +2,8 @@
 default_question_category = ''
 
 # memcache keys
-category_question_bank_with_solution_memcache_key = '{}_category_questions_with_solution'
-category_question_bank_without_solution_memcache_key = '{}_category_questions_without_solution'
+category_question_bank_memcache_key = '{}_category_questions_with_solution'
+solution_set = 'solution_set_memcache_key'
 answers_memcache_key = 'answers'
 categories_mamcache = 'categories_list'
 
@@ -17,3 +17,11 @@ correct_answer_id = 'correct_answer_id'
 
 # alerts and messages
 error_message = 'An Error occurred! Please try again later!'
+
+# response keys
+user_response = 'attempted_answers'
+user_email = 'email'
+
+# response_objects
+fail_response = {'success': False}
+success_response = {'success': True}

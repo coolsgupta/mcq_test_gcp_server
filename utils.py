@@ -22,7 +22,7 @@ class MemcacheHandler:
 
     @classmethod
     def set_category_question_set(cls, category):
-        memcache_key = constants.category_question_bank_with_solution_memcache_key.format(category)
+        memcache_key = constants.category_question_bank_memcache_key.format(category)
         data_object = data_models.QuestionSetModel.all()
         if category != 'ALL':
             data_object = data_object.filter('category', category)
@@ -38,18 +38,17 @@ class MemcacheHandler:
             logging.error(traceback.format_exc())
             raise Exception('Unable to load answers')
 
-        question_list_with_answers = []
+        question_list_without_answers = []
         for question_obj in question_data_obj:
-            question_list_with_answers.append({
+            question_list_without_answers.append({
                 constants.question_id: question_obj.question_id,
                 constants.question_category: question_obj.category,
-                constants.correct_answer_id: question_obj.correct_answer_id,
                 constants.question_text: question_obj.question_text,
                 constants.answers: {answer_id: answers_dict[answer_id] for answer_id in question_obj.answers}
             })
 
-        memcache.set(memcache_key, json.dumps(question_list_with_answers))
-        return question_list_with_answers
+        memcache.set(memcache_key, json.dumps(question_list_without_answers))
+        return question_list_without_answers
 
     @classmethod
     def set_answers_memcache(cls):
@@ -62,11 +61,20 @@ class MemcacheHandler:
         return all_answers_dict
 
     @classmethod
-    def delete_question_bank(cls, categories):
+    def delete_question_bank_memcache(cls, categories):
         memcache.delete(constants.answers_memcache_key)
         for category in categories:
-            memcache.delete(constants.category_question_bank_with_solution_memcache_key.format(category))
+            memcache.delete(constants.category_question_bank_memcache_key.format(category))
         memcache.set(constants.categories_mamcache, json.dumps(list(categories)))
+
+    @classmethod
+    def set_solution_memcache(cls):
+        question_data_obj = data_models.QuestionSetModel.all().fetch(None)
+        solution_map = {
+            question_obj.question_id: question_obj.correct_answer_id for question_obj in question_data_obj
+        }
+        memcache.set(constants.solution_set, json.dumps(solution_map))
+        return solution_map
 
 
 def insert_update_question_bank_db(question_set):
@@ -111,7 +119,7 @@ def insert_update_question_bank_db(question_set):
                 question_record.answers.append(answer_id)
 
         question_record.put()
-    MemcacheHandler.delete_question_bank(question_categories)
+    MemcacheHandler.delete_question_bank_memcache(question_categories)
 
 
 
