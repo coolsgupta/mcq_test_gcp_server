@@ -80,8 +80,8 @@ class QuestionBankHandler:
 class ScoreReportHandler:
     @classmethod
     def save_score_sheet(cls, score_sheet):
-        score_sheet_id = key_name=uuid.uuid4()
-        score_report_object = data_models.ScoreSheets(score_sheet_id)
+        score_sheet_id = str(uuid.uuid4())
+        score_report_object = data_models.ScoreSheets(key_name=score_sheet_id)
         score_report_object.score_sheet_id = score_sheet_id
         score_report_object.score_sheet = json.dumps(score_sheet)
         score_report_object.put()
@@ -127,7 +127,7 @@ class ScoreReportHandler:
                 'score': score,
                 'unattempted': unattempted,
                 'total_questions': len(user_response),
-                'wrong': len(user_response) - score
+                'wrong': len(user_response) - score - unattempted
             }
 
             cls.add_new_score_sheet(user_email, cls.save_score_sheet(score_sheet))
