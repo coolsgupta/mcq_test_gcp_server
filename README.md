@@ -37,8 +37,9 @@
 
 #### steps
   1. Go to the main project home directory ReactApp/.
-  2. run "npm -i"
-  3. run "npm start"
+  2. run "npm i"
+  3. In Constant.js check server address to be local.
+  4. run "npm start"
 
 
 ## Possible Improvements
