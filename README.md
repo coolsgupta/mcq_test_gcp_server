@@ -32,7 +32,7 @@
   1. ReactApp/src/App.js: contains the app configuration and respective routes for the react app.
   2. ReactApp/src/components: Contains supporting components for each page.
   3. ReactApp/src/components/Login.js: Collects user info: User Email used for to manage user data.
-  4. ReactApp/src/components/HomePage.js: Serves the homepage with the operation to attempt the test category wise and displays all previous score report.
+  4. ReactApp/src/components/MainPage.js: Serves the homepage with the operation to attempt the test category wise and displays all previous score report.
   5. ReactApp/src/components/TakeTest.js: Serves the Test page to the user in mcq format with a submit button to submit the test and get the score report(loaded on the main page).
 
 ### deployment on local server
