@@ -10,7 +10,7 @@ CORS(app)
 @app.route('/')
 def hello_world():
     # todo: attach reach build
-    return 'Hello World!'
+    return "MCQ test taking tool backend"
 
 
 @app.route('/register_user', methods=["GET", "POST"])
