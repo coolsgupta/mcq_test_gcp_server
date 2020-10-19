@@ -25,3 +25,4 @@ user_email = 'email'
 # response_objects
 fail_response = {'success': False}
 success_response = {'success': True}
+category_selected = 'category_selected'

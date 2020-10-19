@@ -10,10 +10,18 @@ import uuid
 
 class UserDatahandler:
     @classmethod
-    def register_new_user(cls, user_email):
+    def register_user(cls, request):
         try:
+
+            logging.info(request.data)
+            request_data = json.loads(request.data)
+            user_email = request_data[constants.user_email]
+
             user_data_object = data_models.Users(key_name=user_email)
-            user_data_object.put()
+            if not user_data_object:
+                user_data_object = data_models.Users(key_name=user_email)
+                user_data_object.put()
+
             return json.dumps({'success': True})
 
         except Exception as e:
@@ -83,6 +91,7 @@ class ScoreReportHandler:
         score_sheet_id = str(uuid.uuid4())
         score_report_object = data_models.ScoreSheets(key_name=score_sheet_id)
         score_report_object.score_sheet_id = score_sheet_id
+        score_sheet['Date'] = score_report_object.modified_at.strftime("%m/%d/%Y, %H:%M")
         score_report_object.score_sheet = json.dumps(score_sheet)
         score_report_object.put()
 
@@ -111,6 +120,7 @@ class ScoreReportHandler:
             request_data = json.loads(request.data)
             user_response = request_data[constants.user_response]
             user_email = request_data[constants.user_email]
+            category_selected = request_data[constants.category_selected]
             logging.info(user_response)
 
             score = 0
@@ -124,6 +134,7 @@ class ScoreReportHandler:
                     score += 1
 
             score_sheet = {
+                'category_selected': category_selected,
                 'score': score,
                 'unattempted': unattempted,
                 'total_questions': len(user_response),

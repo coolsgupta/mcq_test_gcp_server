@@ -13,9 +13,9 @@ def hello_world():
     return 'Hello World!'
 
 
-@app.route('/register_new_user')
-def register_new_user():
-    return UserDatahandler.register_new_user(request.args.get(constants.user_email, None))
+@app.route('/register_user', methods=["GET", "POST"])
+def register_user():
+    return UserDatahandler.register_user(request)
 
 
 @app.route('/create_update_question_bank')
